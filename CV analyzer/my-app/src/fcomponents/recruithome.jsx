@@ -41,7 +41,7 @@ export default function RecruitHome() {
 
     try {
       // First API call: Upload the file
-      const uploadResponse = await axios.post("/upload", formData);
+      const uploadResponse = await axios.post("/api/upload", formData);
       console.log("File upload response:", uploadResponse.data);
 
       setSuccess("File uploaded successfully!");
