@@ -6,23 +6,26 @@ export default function RecruiterPage() {
   const [usertype, setUsertype] = useState(""); // User role selection
   const [leaderboardData, setLeaderboardData] = useState(null); // Store fetched leaderboard data
   const [error, setError] = useState(""); // Store error message
+  const [loading, setLoading] = useState(false); // Show loading state
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Show loading
+    setError(""); // Clear any previous errors
 
     try {
-      const response = await axios.post("http://localhost:3001/get-data", { usertype });
+      const response = await axios.post("/api/get-data", { usertype });
       setLeaderboardData(response.data.leaderboard); // Store the leaderboard data
-      setError(""); // Clear any previous errors
     } catch (err) {
-      console.error("Axios Error: ", err);
-      if (err.response) {
-        console.error("Backend Error Response:", err.response.data);
-        setError(`Error from backend: ${err.response.data.error}`);
+      console.error("Error fetching leaderboard:", err);
+      if (err.response && err.response.data) {
+        setError(`Error: ${err.response.data.error}`);
       } else {
-        setError("Error fetching leaderboard. Please try again.");
+        setError("Network error. Please try again later.");
       }
       setLeaderboardData(null); // Clear previous data on error
+    } finally {
+      setLoading(false); // Hide loading
     }
   };
 
@@ -31,7 +34,11 @@ export default function RecruiterPage() {
       <div className="logo"></div>
       <div className="section">
         <form onSubmit={handleSubmit} className="recruiter-form">
-          <select value={usertype} onChange={(e) => setUsertype(e.target.value)}>
+          <select
+            value={usertype}
+            onChange={(e) => setUsertype(e.target.value)}
+            required
+          >
             <option value="" disabled>
               Choose an option
             </option>
@@ -40,7 +47,9 @@ export default function RecruiterPage() {
             <option value="database-management">Database Handler</option>
           </select>
 
-          <button type="submit" className="findjobs">FIND JOBS</button>
+          <button type="submit" className="findjobs" disabled={loading}>
+            {loading ? "Loading..." : "FIND JOBS"}
+          </button>
         </form>
 
         {error && <p className="error-message">{error}</p>}
@@ -58,8 +67,9 @@ export default function RecruiterPage() {
               </thead>
               <tbody>
                 {leaderboardData.map((item, index) => {
-                  const downloadUrl = `https://oewyazfmpcfoxwjunwpp.supabase.co/storage/v1/object/pdf/public/${usertype}/${encodeURIComponent(item["File Name"])}`;
-                  console.log(`Download URL for ${item["File Name"]}: ${downloadUrl}`);
+                  const downloadUrl = `https://oewyazfmpcfoxwjunwpp.supabase.co/storage/v1/object/public/${usertype}/${encodeURIComponent(
+                    item["File Name"]
+                  )}`;
 
                   return (
                     <tr key={index}>
