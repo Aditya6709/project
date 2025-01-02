@@ -57,7 +57,7 @@ export default function RecruitHome() {
       } catch (scriptError) {
         console.error("Error with script execution:", scriptError);
         setError(
-          scriptError.response?.data?.message ||
+          scriptError.response?.data?.error ||
             "Error executing backend script. Please try again later."
         );
         setSuccess(null);
@@ -65,7 +65,7 @@ export default function RecruitHome() {
     } catch (uploadError) {
       console.error("Error uploading file:", uploadError);
       setError(
-        uploadError.response?.data?.message || "Error uploading file. Please try again later."
+        uploadError.response?.data?.error || "Error uploading file. Please try again later."
       );
       setSuccess(null);
     } finally {
@@ -111,3 +111,4 @@ export default function RecruitHome() {
     </div>
   );
 }
+
