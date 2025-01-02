@@ -1,24 +1,28 @@
 const express = require("express");
-const storage = require("../bcomponents/database"); // Your Supabase setup file
+const { createClient } = require("@supabase/supabase-js"); // Ensure proper Supabase client setup
 const mime = require("mime-types");
 const multer = require("multer");
 const router = express.Router();
-const mimeType = "application/pdf";
 
-// Set up multer for file handling in serverless functions
-const storageEngine = multer.memoryStorage(); // Store file in memory
-const upload = multer({ storage: storageEngine }).single("file"); // Expecting a single file upload with the field name 'file'
+// Configure Supabase client
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+const storage = createClient(supabaseUrl, supabaseKey);
+
+// Set up multer for handling file uploads
+const storageEngine = multer.memoryStorage();
+const upload = multer({ storage: storageEngine }).single("file");
 
 // POST route for file upload
 router.post("/", upload, async (req, res) => {
   try {
-    // Check if a file is sent
+    // Validate uploaded file
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const file = req.file; // The uploaded file object from req.file
-    const category = req.body.category; // Get category from request body
+    const file = req.file;
+    const category = req.body.category;
 
     // Validate category
     const folderMapping = {
@@ -33,44 +37,43 @@ router.post("/", upload, async (req, res) => {
 
     const folder = folderMapping[category];
 
-    // Check if the file is empty
+    // Validate file content
     if (file.buffer.length === 0) {
       return res.status(400).json({ message: "File is empty" });
     }
 
-    // Check for the .emptyfolderplaceholder file and skip it
     if (file.originalname === ".emptyfolderplaceholder") {
       return res
         .status(400)
         .json({ message: "Empty folder placeholder file is not allowed" });
     }
 
-    // Upload file directly to the Supabase Storage
-    const { data, error } = await storage.upload(
-      `public/${folder}${file.originalname}`,
-      file.buffer,
-      {
-        contentType: mimeType,
+    // Upload file to Supabase storage
+    const { data, error } = await storage.storage
+      .from("pdf") // Bucket name
+      .upload(`${folder}${file.originalname}`, file.buffer, {
+        contentType: mime.lookup(file.originalname) || "application/octet-stream",
         cacheControl: "3600",
-        upsert: false, // Prevent overwriting existing files
-      }
-    );
+        upsert: false, // Avoid overwriting existing files
+      });
 
     if (error) {
       console.error("Error uploading to Supabase:", error);
-      return res
-        .status(500)
-        .json({ message: "Error uploading file to Supabase", error: error.message });
+      return res.status(500).json({ message: "Failed to upload file", error: error.message });
     }
 
-    const fileUrl = `${storage.supabaseUrl}/storage/v1/object/public/${data.Key}`;
+    // Generate public URL
+    const { publicUrl } = storage.storage.from("pdf").getPublicUrl(`${folder}${file.originalname}`);
+    if (!publicUrl) {
+      return res.status(500).json({ message: "Failed to generate public URL" });
+    }
 
-    // Respond with the file's metadata
+    // Respond with success
     res.status(200).json({
       message: "File uploaded successfully!",
       metadata: {
-        fileName: data.name,
-        downloadUrl: fileUrl,
+        fileName: file.originalname,
+        downloadUrl: publicUrl,
       },
     });
   } catch (error) {
