@@ -10,11 +10,11 @@ const upload = multer(); // This will handle the file uploads
 // Middleware
 app.use(cors()); // Enable CORS for all routes
 app.use(bodyparser.json()); // Parse HTTP requests into `req.body` in JSON form
-app.use('/upload', upload.single('file')); // Use multer to handle the uploaded file
-app.use('/upload', router); // Use your router for handling file upload logic
+app.use('/api/upload', upload.single('file')); // Use multer to handle the uploaded file
+app.use('/api/upload', router); // Use your router for handling file upload logic
 
 // Getting leaderboard backend
-app.post("/get-data", async (req, res) => {
+app.post("/api/get-data", async (req, res) => {
   const { usertype } = req.body;  // Extract usertype from the body
 
   let filePath = '';
