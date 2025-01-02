@@ -1,11 +1,16 @@
 const express = require("express");
 const storage = require("../bcomponents/database"); // Your Supabase setup file
 const mime = require("mime-types");
+const multer = require("multer");
 const router = express.Router();
 const mimeType = "application/pdf";
 
+// Set up multer for file handling in serverless functions
+const storageEngine = multer.memoryStorage(); // Store file in memory
+const upload = multer({ storage: storageEngine }).single("file"); // Expecting a single file upload with the field name 'file'
+
 // POST route for file upload
-router.post("/", async (req, res) => {
+router.post("/", upload, async (req, res) => {
   try {
     // Check if a file is sent
     if (!req.file) {
@@ -77,4 +82,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-module.exports = router;
+// Export the router as a serverless function for Vercel
+module.exports = (req, res) => {
+  router(req, res);
+};

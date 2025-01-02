@@ -2,22 +2,18 @@ const express = require("express");
 const bodyparser = require("body-parser");
 const cors = require("cors");
 const multer = require('multer');
+const router = require('../routes/uploadroute.js'); // Adjust path if necessary
+const storage = require('../database.js'); // Adjust path if necessary
 const app = express();
 const upload = multer(); // This will handle the file uploads
-const router = require('./routes/uploadroute.js');
-const storage= require('./database.js');
+
 // Middleware
 app.use(cors()); // Enable CORS for all routes
 app.use(bodyparser.json()); // Parse HTTP requests into `req.body` in JSON form
 app.use('/upload', upload.single('file')); // Use multer to handle the uploaded file
-
 app.use('/upload', router); // Use your router for handling file upload logic
 
-
-
-
-//getting leaderboard backend
-
+// Getting leaderboard backend
 app.post("/get-data", async (req, res) => {
   const { usertype } = req.body;  // Extract usertype from the body
 
@@ -55,11 +51,7 @@ app.post("/get-data", async (req, res) => {
   }
 });
 
-
-
-
-
-// Start the server
-app.listen(3001, () => {
-  console.log("Listening on port 3001");
-});
+// Serverless function export for Vercel
+module.exports = (req, res) => {
+  app(req, res); // Let Vercel handle the routing
+};
