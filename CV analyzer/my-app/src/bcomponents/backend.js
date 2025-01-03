@@ -67,8 +67,12 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
     }
 
     // Generate public URL
-    const { publicUrl } = storage.storage.from("pdf").getPublicUrl(`${folder}${file.originalname}`);
-    if (!publicUrl) {
+    const { data: publicData, error: publicError } = storage.storage
+      .from("pdf")
+      .getPublicUrl(`${folder}${file.originalname}`);
+
+    if (publicError) {
+      console.error("Error generating public URL:", publicError);
       return res.status(500).json({ message: "Failed to generate public URL" });
     }
 
@@ -77,7 +81,7 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
       message: "File uploaded successfully!",
       metadata: {
         fileName: file.originalname,
-        downloadUrl: publicUrl,
+        downloadUrl: publicData.publicUrl,
       },
     });
   } catch (error) {
@@ -91,7 +95,7 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 
 // POST route for leaderboard data
 app.post("/api/get-data", async (req, res) => {
-  const { usertype } = req.body;  // Extract usertype from the body
+  const { usertype } = req.body; // Extract usertype from the body
 
   let filePath = '';
   switch (usertype) {
@@ -120,7 +124,7 @@ app.post("/api/get-data", async (req, res) => {
     const text = await data.text();
     const leaderboardData = JSON.parse(text); // Parse the leaderboard JSON
 
-    res.json({ leaderboard: leaderboardData });  // Send the data back to the frontend
+    res.json({ leaderboard: leaderboardData }); // Send the data back to the frontend
   } catch (err) {
     console.error("Error fetching data:", err);
     res.status(500).json({ error: "Internal server error" });
@@ -128,6 +132,4 @@ app.post("/api/get-data", async (req, res) => {
 });
 
 // Serverless function export for Vercel
-module.exports = (req, res) => {
-  app(req, res); // Let Vercel handle the routing
-};
+module.exports = app;
