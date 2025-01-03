@@ -2,19 +2,27 @@ const express = require("express");
 const { createClient } = require("@supabase/supabase-js"); // Ensure proper Supabase client setup
 const mime = require("mime-types");
 const multer = require("multer");
-const router = express.Router();
+const bodyparser = require("body-parser");
+const cors = require("cors");
 
 // Configure Supabase client
 const supabaseUrl = 'https://oewyazfmpcfoxwjunwpp.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ld3lhemZtcGNmb3h3anVud3BwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU0MDE0NzgsImV4cCI6MjA1MDk3NzQ3OH0.wpJQbLcwvnTO-BW3D4d9R1LrLlUiBONPlzUtUU3Qb8w';
-const storage = createClient(supabaseUrl, supabaseKey);
+// Initialize Supabase storage bucket
+const bucketName = 'pdf'; // Replace with your bucket name
+const storage = supabase.storage.from(bucketName);
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Set up multer for handling file uploads
-const storageEngine = multer.memoryStorage();
-const upload = multer({ storage: storageEngine }).single("file");
+
+const app = express();
+const upload = multer({ storage: multer.memoryStorage() }); // Set up multer for handling file uploads
+
+// Middleware
+app.use(cors()); // Enable CORS for all routes
+app.use(bodyparser.json()); // Parse HTTP requests into `req.body` in JSON form
 
 // POST route for file upload
-router.post("/", upload, async (req, res) => {
+app.post("/api/upload", upload.single("file"), async (req, res) => {
   try {
     // Validate uploaded file
     if (!req.file) {
@@ -63,8 +71,12 @@ router.post("/", upload, async (req, res) => {
     }
 
     // Generate public URL
-    const { publicUrl } = storage.storage.from("pdf").getPublicUrl(`${folder}${file.originalname}`);
-    if (!publicUrl) {
+    const { data: publicData, error: publicError } = storage.storage
+      .from("pdf")
+      .getPublicUrl(`${folder}${file.originalname}`);
+
+    if (publicError) {
+      console.error("Error generating public URL:", publicError);
       return res.status(500).json({ message: "Failed to generate public URL" });
     }
 
@@ -73,7 +85,7 @@ router.post("/", upload, async (req, res) => {
       message: "File uploaded successfully!",
       metadata: {
         fileName: file.originalname,
-        downloadUrl: publicUrl,
+        downloadUrl: publicData.publicUrl,
       },
     });
   } catch (error) {
@@ -85,7 +97,43 @@ router.post("/", upload, async (req, res) => {
   }
 });
 
-// Export the router as a serverless function for Vercel
-module.exports = (req, res) => {
-  router(req, res);
-};
+// POST route for leaderboard data
+app.post("/api/get-data", async (req, res) => {
+  const { usertype } = req.body; // Extract usertype from the body
+
+  let filePath = '';
+  switch (usertype) {
+    case "web-designing":
+      filePath = "json/web-designing_structured_data.json";
+      break;
+    case "data-scientist":
+      filePath = "json/data-scientist_structured_data.json";
+      break;
+    case "database-management":
+      filePath = "json/database-management_structured_data.json";
+      break;
+    default:
+      return res.status(400).json({ error: "Invalid usertype" });
+  }
+
+  try {
+    // Fetch file from Supabase
+    const { data, error } = await storage.storage.from("json").download(filePath);
+
+    if (error) {
+      console.error("Supabase Error:", error);
+      return res.status(500).json({ error: "Failed to fetch leaderboard data" });
+    }
+
+    const text = await data.text();
+    const leaderboardData = JSON.parse(text); // Parse the leaderboard JSON
+
+    res.json({ leaderboard: leaderboardData }); // Send the data back to the frontend
+  } catch (err) {
+    console.error("Error fetching data:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Serverless function export for Vercel
+module.exports = app;
