@@ -9,19 +9,23 @@ export default function RecruitHome() {
   const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false); // Loading state
 
+  // Handle file selection
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-    setFile(selectedFile);
-    setError(null);
-    setSuccess(null);
+    setFile(selectedFile || null); // Ensure file is null if no file selected
+    setError(null); // Reset error messages
+    setSuccess(null); // Reset success messages
   };
 
+  // Handle category selection
   const handleCategoryChange = (event) => {
-    setCategory(event.target.value);
-    setError(null);
+    setCategory(event.target.value || ""); // Ensure category is valid
+    setError(null); // Reset error messages
   };
 
+  // Handle file upload
   const handleUpload = async () => {
+    // Input validation
     if (!file) {
       setError("Please select a file before uploading.");
       setSuccess(null);
@@ -34,54 +38,44 @@ export default function RecruitHome() {
       return;
     }
 
-    setIsLoading(true);
+    // Prepare form data
     const formData = new FormData();
     formData.append("file", file);
     formData.append("category", category);
 
+    // Start upload process
+    setIsLoading(true);
+    setError(null); // Clear previous errors
+    setSuccess(null); // Clear previous success messages
+
     try {
-      // First API call: Upload the file
       const uploadResponse = await axios.post("/api/upload", formData);
       console.log("File upload response:", uploadResponse.data);
 
       setSuccess("File uploaded successfully!");
-      setError(null);
-
-      // Second API call: Trigger the backend script
-      // try {
-      //   const scriptResponse = await axios.post("/api/run_full_script");
-      //   console.log("Script execution response:", scriptResponse.data);
-
-      //   // Update success message to reflect both operations
-      //   setSuccess("File uploaded and script executed successfully!");
-      // } catch (scriptError) {
-      //   console.error("Error with script execution:", scriptError);
-      //   setError(
-      //     scriptError.response?.data?.error ||
-      //       "Error executing backend script. Please try again later."
-      //   );
-      //   setSuccess(null);
-      // }
     } catch (uploadError) {
       console.error("Error uploading file:", uploadError);
+
       setError(
         uploadError.response?.data?.error || "Error uploading file. Please try again later."
       );
-      setSuccess(null);
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Reset loading state
     }
   };
 
   return (
     <div className="recruitpage">
       <div className="file-upload-section">
+        {/* File Input */}
         <input
           type="file"
           accept=".pdf"
           onChange={handleFileChange}
           className="custom-button"
         />
+
+        {/* Category Dropdown */}
         <select onChange={handleCategoryChange} value={category}>
           <option value="" disabled>
             Select Category
@@ -90,6 +84,8 @@ export default function RecruitHome() {
           <option value="data-scientist">Data Scientist</option>
           <option value="database-management">Database Management</option>
         </select>
+
+        {/* Upload Button */}
         <div className="uploadbutton">
           <button onClick={handleUpload} disabled={isLoading}>
             {isLoading ? "Uploading..." : "Upload"}
@@ -97,12 +93,14 @@ export default function RecruitHome() {
         </div>
       </div>
 
+      {/* Error Message */}
       {error && (
         <div style={{ color: "red", marginTop: "20px" }}>
           <strong>{error}</strong>
         </div>
       )}
 
+      {/* Success Message */}
       {success && (
         <div style={{ color: "green", marginTop: "20px" }}>
           <strong>{success}</strong>
@@ -111,4 +109,5 @@ export default function RecruitHome() {
     </div>
   );
 }
+
 
