@@ -48,20 +48,20 @@ export default function RecruitHome() {
       setError(null);
 
       // Second API call: Trigger the backend script
-      try {
-        const scriptResponse = await axios.post("/api/run_full_script");
-        console.log("Script execution response:", scriptResponse.data);
+      // try {
+      //   const scriptResponse = await axios.post("/api/run_full_script");
+      //   console.log("Script execution response:", scriptResponse.data);
 
-        // Update success message to reflect both operations
-        setSuccess("File uploaded and script executed successfully!");
-      } catch (scriptError) {
-        console.error("Error with script execution:", scriptError);
-        setError(
-          scriptError.response?.data?.error ||
-            "Error executing backend script. Please try again later."
-        );
-        setSuccess(null);
-      }
+      //   // Update success message to reflect both operations
+      //   setSuccess("File uploaded and script executed successfully!");
+      // } catch (scriptError) {
+      //   console.error("Error with script execution:", scriptError);
+      //   setError(
+      //     scriptError.response?.data?.error ||
+      //       "Error executing backend script. Please try again later."
+      //   );
+      //   setSuccess(null);
+      // }
     } catch (uploadError) {
       console.error("Error uploading file:", uploadError);
       setError(
