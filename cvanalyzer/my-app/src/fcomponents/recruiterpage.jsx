@@ -67,7 +67,7 @@ export default function RecruiterPage() {
               </thead>
               <tbody>
                 {leaderboardData.map((item, index) => {
-                  const downloadUrl = `https://oewyazfmpcfoxwjunwpp.supabase.co/storage/v1/object/public/${usertype}/${encodeURIComponent(
+                  const downloadUrl = `https://oewyazfmpcfoxwjunwpp.supabase.co/storage/v1/object/pdf/public/${usertype}/${encodeURIComponent(
                     item["File Name"]
                   )}`;
 
