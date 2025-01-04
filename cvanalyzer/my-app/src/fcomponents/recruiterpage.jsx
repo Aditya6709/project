@@ -14,7 +14,7 @@ export default function RecruiterPage() {
     setError(""); // Clear any previous errors
 
     try {
-      const response = await axios.post("/api/get-data", { usertype });
+      const response = await axios.post("/api/getdata", { usertype });
       setLeaderboardData(response.data.leaderboard); // Store the leaderboard data
     } catch (err) {
       console.error("Error fetching leaderboard:", err);

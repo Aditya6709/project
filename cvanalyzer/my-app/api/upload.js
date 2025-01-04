@@ -86,39 +86,39 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
   }
 });
 
-// POST route for leaderboard data
-app.post("/api/get-data", async (req, res) => {
-  const { usertype } = req.body;
+// // POST route for leaderboard data
+// app.post("/api/get-data", async (req, res) => {
+//   const { usertype } = req.body;
 
-  const filePathMapping = {
-    "web-designing": "json/web-designing_structured_data.json",
-    "data-scientist": "json/data-scientist_structured_data.json",
-    "database-management": "json/database-management_structured_data.json",
-  };
+//   const filePathMapping = {
+//     "web-designing": "json/web-designing_structured_data.json",
+//     "data-scientist": "json/data-scientist_structured_data.json",
+//     "database-management": "json/database-management_structured_data.json",
+//   };
 
-  const filePath = filePathMapping[usertype];
-  if (!filePath) {
-    return res.status(400).json({ error: "Invalid usertype provided" });
-  }
+//   const filePath = filePathMapping[usertype];
+//   if (!filePath) {
+//     return res.status(400).json({ error: "Invalid usertype provided" });
+//   }
 
-  try {
-    // Fetch file from Supabase
-    const { data, error } = await supabase.storage.from("json").download(filePath);
+//   try {
+//     // Fetch file from Supabase
+//     const { data, error } = await supabase.storage.from("json").download(filePath);
 
-    if (error) {
-      console.error("Supabase Fetch Error:", error);
-      return res.status(500).json({ error: "Failed to fetch leaderboard data" });
-    }
+//     if (error) {
+//       console.error("Supabase Fetch Error:", error);
+//       return res.status(500).json({ error: "Failed to fetch leaderboard data" });
+//     }
 
-    const fileContent = await data.text();
-    const leaderboardData = JSON.parse(fileContent);
+//     const fileContent = await data.text();
+//     const leaderboardData = JSON.parse(fileContent);
 
-    res.json({ leaderboard: leaderboardData });
-  } catch (err) {
-    console.error("Leaderboard Fetch Error:", err);
-    res.status(500).json({ error: "Internal server error while fetching leaderboard data" });
-  }
-});
+//     res.json({ leaderboard: leaderboardData });
+//   } catch (err) {
+//     console.error("Leaderboard Fetch Error:", err);
+//     res.status(500).json({ error: "Internal server error while fetching leaderboard data" });
+//   }
+// });
 
-// Export for Vercel
+// // Export for Vercel
 module.exports = app;
