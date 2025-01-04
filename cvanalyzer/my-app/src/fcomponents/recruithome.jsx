@@ -46,7 +46,7 @@ export default function RecruitHome() {
     setSuccess(null);
 
     try {
-      const uploadResponse = await axios.post("https://project1-gjoj9ypc6-adityas-projects-5d4f1d8b.vercel.app/api/upload", formData);
+      const uploadResponse = await axios.post("/api/upload", formData);
       console.log("File upload response:", uploadResponse.data);
 
       setSuccess("File uploaded successfully!");
