@@ -37,7 +37,7 @@ export default function RecruitHome() {
 
         // Wait for the second API call to complete
         try {
-          const additionalResponse = await axios.post('/api/runscript');
+          const additionalResponse = await axios.post('/api/runscript.py');
           console.log('Second API call response:', additionalResponse.data);
         } catch (additionalErr) {
           console.error('Error with second API call:', additionalErr);
