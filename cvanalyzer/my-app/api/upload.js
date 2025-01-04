@@ -5,16 +5,25 @@ const multer = require("multer");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
-// Supabase Configuration
-const supabaseUrl = "'https://oewyazfmpcfoxwjunwpp.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ld3lhemZtcGNmb3h3anVud3BwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU0MDE0NzgsImV4cCI6MjA1MDk3NzQ3OH0.wpJQbLcwvnTO-BW3D4d9R1LrLlUiBONPlzUtUU3Qb8w"; // Use environment variables for security
+// Supabase Configuration (Use environment variables for security)
+const supabaseUrl = "https://oewyazfmpcfoxwjunwpp.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ld3lhemZtcGNmb3h3anVud3BwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU0MDE0NzgsImV4cCI6MjA1MDk3NzQ3OH0.wpJQbLcwvnTO-BW3D4d9R1LrLlUiBONPlzUtUU3Qb8w"; // Replace with your actual key, or use environment variables
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Middleware
-app.use(cors());
+// CORS configuration to allow your frontend's origin
+const corsOptions = {
+  origin: "project1-leahgi8qv-adityas-projects-5d4f1d8b.vercel.app", // Replace with your frontend URL
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"],
+  credentials: true, // Allow credentials (if needed)
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
+
 app.use(bodyParser.json());
 
 // POST route for file upload
