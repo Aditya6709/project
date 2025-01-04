@@ -20,7 +20,7 @@ const LoginPage = () => {
   return (
     
     <div className='main'>
-      <h2>Login aditya</h2>
+      <h2>Login</h2>
       <form onSubmit={handleLogin}>
         <div className='input'>
           <label>
