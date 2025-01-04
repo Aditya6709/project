@@ -200,21 +200,6 @@ def preprocessing(dataframe, bucket_name, main_folder="public"):
 preprocessing(df, bucket_name, folder_path)
 
 
-@app.post("/api/run_full_script")
-async def run_full_script():
-    try:
-        # Run your Python script (this will execute the entire script)
-        result = subprocess.run(['python', 'C:/Users/adity/OneDrive/Desktop/CV analyzer/my-app/app.py'], capture_output=True, text=True)
-
-        # If there is an error running the script, return an error response
-        if result.returncode != 0:
-            return JSONResponse(status_code=500, content={"error": f"Script execution failed: {result.stderr}"})
-
-        # Return success and the output from the script
-        return {"message": "Script executed successfully", "output": result.stdout}
-    
-    except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
 
 
 
