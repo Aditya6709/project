@@ -22,41 +22,36 @@ app.use((req, res, next) => {
 });
 
 app.post("/api/getdata", async (req, res) => {
-  const { usertype } = req.body;  // Extract usertype from the body
+  const { usertype } = req.body;
 
-  let filePath = '';
-  switch (usertype) {
-    case "web-designing":
-      filePath = "json/web-designing_structured_data.json";
-      break;
-    case "data-scientist":
-      filePath = "json/data-scientist_structured_data.json";
-      break;
-    case "database-management":
-      filePath = "json/database-management_structured_data.json";
-      break;
-    default:
-      return res.status(400).json({ error: "Invalid usertype" });
+  // Map usertype to file paths
+  const fileMap = {
+    "web-designing": "json/web-designing_structured_data.json",
+    "data-scientist": "json/data-scientist_structured_data.json",
+    "database-management": "json/database-management_structured_data.json",
+  };
+
+  const filePath = fileMap[usertype];
+  if (!filePath) {
+    return res.status(400).json({ error: "Invalid usertype" });
   }
 
   try {
-    // Fetch file from Supabase
+    const storage = supabase.storage.from("pdf"); 
     const { data, error } = await storage.download(filePath);
 
     if (error) {
-      console.error("Supabase Error:", error);
+      console.error("Supabase Storage Error:", error);
       return res.status(500).json({ error: "Failed to fetch leaderboard data" });
     }
 
     const text = await data.text();
-    const leaderboardData = JSON.parse(text); // Parse the leaderboard JSON
-
-    res.json({ leaderboard: leaderboardData });  // Send the data back to the frontend
+    const leaderboardData = JSON.parse(text);
+    res.json({ leaderboard: leaderboardData });
   } catch (err) {
-    console.error("Error fetching data:", err);
+    console.error("Internal Error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-  
   // Export for Vercel
   module.exports = app;
