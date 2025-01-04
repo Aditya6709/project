@@ -7,7 +7,7 @@ export default function RecruitHome() {
   const [category, setCategory] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [isLoading, setIsLoading] = useState(false);
 
   // Handle file selection
   const handleFileChange = (event) => {
@@ -25,7 +25,6 @@ export default function RecruitHome() {
 
   // Handle file upload
   const handleUpload = async () => {
-    // Input validation
     if (!file) {
       setError("Please select a file before uploading.");
       setSuccess(null);
@@ -38,15 +37,13 @@ export default function RecruitHome() {
       return;
     }
 
-    // Prepare form data
     const formData = new FormData();
     formData.append("file", file);
     formData.append("category", category);
 
-    // Start upload process
     setIsLoading(true);
-    setError(null); // Clear previous errors
-    setSuccess(null); // Clear previous success messages
+    setError(null);
+    setSuccess(null);
 
     try {
       const uploadResponse = await axios.post("/api/upload", formData);
@@ -56,11 +53,13 @@ export default function RecruitHome() {
     } catch (uploadError) {
       console.error("Error uploading file:", uploadError);
 
-      setError(
-        uploadError.response?.data?.error || "Error uploading file. Please try again later."
-      );
+      // Safely extract error message
+      const errorMessage =
+        uploadError.response?.data?.error || "Error uploading file. Please try again later.";
+
+      setError(errorMessage);
     } finally {
-      setIsLoading(false); // Reset loading state
+      setIsLoading(false);
     }
   };
 
@@ -94,14 +93,14 @@ export default function RecruitHome() {
       </div>
 
       {/* Error Message */}
-      {error && (
+      {error && typeof error === "string" && (
         <div style={{ color: "red", marginTop: "20px" }}>
           <strong>{error}</strong>
         </div>
       )}
 
       {/* Success Message */}
-      {success && (
+      {success && typeof success === "string" && (
         <div style={{ color: "green", marginTop: "20px" }}>
           <strong>{success}</strong>
         </div>
@@ -109,5 +108,6 @@ export default function RecruitHome() {
     </div>
   );
 }
+
 
 
