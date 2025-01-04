@@ -13,9 +13,12 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
-// CORS configuration to allow your frontend's origin
+// CORS configuration for production and development
 const corsOptions = {
-  origin: "project1-leahgi8qv-adityas-projects-5d4f1d8b.vercel.app", // Replace with your frontend URL
+  origin: [
+    "https://project1-leahgi8qv-adityas-projects-5d4f1d8b.vercel.app", // Frontend URL
+    "http://localhost:3000", // Local development
+  ],
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type"],
   credentials: true, // Allow credentials (if needed)
