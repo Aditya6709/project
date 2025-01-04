@@ -34,9 +34,9 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 
     // Validate category
     const folderMapping = {
-      "web-designing": "web-designing/",
-      "data-scientist": "data-scientist/",
-      "database-management": "database-management/",
+      "web-designing": "public/web-designing/",
+      "data-scientist": "publci/data-scientist/",
+      "database-management": "public/database-management/",
     };
 
     if (!folderMapping[category]) {
