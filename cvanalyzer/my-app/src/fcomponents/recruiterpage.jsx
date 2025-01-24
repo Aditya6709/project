@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./cssfiles/recruiterpage.css";
+import logo from "../logo.png";
 
 export default function RecruiterPage() {
   const [usertype, setUsertype] = useState(""); // User role selection
@@ -30,8 +31,11 @@ export default function RecruiterPage() {
   };
 
   return (
+        
     <div className="recruiter-page">
-      <div className="logo"></div>
+      <img className="logo" src={logo} alt=""/>
+      
+    
       <div className="section">
         <form onSubmit={handleSubmit} className="recruiter-form">
           <select

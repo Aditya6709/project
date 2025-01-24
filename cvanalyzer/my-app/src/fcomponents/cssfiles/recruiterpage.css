@@ -117,3 +117,18 @@ select {
         font-size: 16px; /* Adjust leaderboard heading size */
     }
 }
+.recruiter-page{
+
+ display: flex;
+ flex-direction: column;
+ gap: 30px;
+ align-items: center;
+
+    
+
+}
+.logo{
+
+    height: 100px;
+    width: 200px;
+}
