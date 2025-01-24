@@ -37,7 +37,7 @@ export default function RecruitHome() {
 
         // Wait for the second API call to complete
         try {
-          const additionalResponse = await axios.post('/api/runscript.py');
+          const additionalResponse = await axios.post('https://agamrampal-cvpyscript.hf.space/api/predict');
           console.log('Second API call response:', additionalResponse.data);
         } catch (additionalErr) {
           console.error('Error with second API call:', additionalErr);
