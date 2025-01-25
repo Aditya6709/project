@@ -10,10 +10,12 @@
   - In the job seeker section, user can upload his resume and get the rank of latest uploaded resume.
   - In the recruiter section, a recruiter can see the leaderboard of any domain and can also download any resume with the available download link.
 
-- **Tech Stack:**  
-  - **Backend:** Python, Resume Parsing with libraries like **PyPDF2** and **spaCy**   
+- **Tech Stack:**
+  - **Frontend : React js
+  - **Backend: node js , express js
+  - **Ml model : python 
   - **Storage:** **Supabase** bucket to store resumes in organized folders.  
-  - **Deployment:** Deployed on **Streamlit** for easy accessibility.  
+  - **Deployment:** Deployed on **Streamlit** and *vercel* for easy accessibility.  
 
 - **Challenges Solved:**  
   - Efficiently extracting and analyzing data from various resume formats (PDF, Docx).  
@@ -30,11 +32,19 @@
 
 - **Live Demo:**  
   The project is live on **Streamlt** and ready for recruiters to test and use.
+
+- **login section**
+- ![image](https://github.com/user-attachments/assets/85adac6f-4c01-4ecc-a40d-6b5c00ac5dca)
+
   
 - **Job Seeker Section**
-  ![image](https://github.com/user-attachments/assets/b56ddbf2-d1f4-451a-8c19-3dd860e28ad7)
+- ![image](https://github.com/user-attachments/assets/01f855dd-55f3-4afb-9039-249c932e519b)
+
 
 - **Recruiter Section**
-  ![image](https://github.com/user-attachments/assets/75702098-d3b2-451f-b2a3-74b58b9abbf8)
+ ![image](https://github.com/user-attachments/assets/b3091d0f-31bc-4c17-9187-2c38af6942c2)
+
+
+
 
 
