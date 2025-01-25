@@ -11,11 +11,11 @@
   - In the recruiter section, a recruiter can see the leaderboard of any domain and can also download any resume with the available download link.
 
 - **Tech Stack:**
-  - **Frontend : React js
-  - **Backend: node js , express js
-  - **Ml model : python 
-  - **Storage:** **Supabase** bucket to store resumes in organized folders.  
-  - **Deployment:** Deployed on **Streamlit** and *vercel* for easy accessibility.  
+  - Frontend : React js
+  - Backend: node js , express js
+  - Ml model : python 
+  - Storage:** **Supabase** bucket to store resumes in organized folders.  
+  - Deployment:** Deployed on **Streamlit** and *vercel* for easy accessibility.  
 
 - **Challenges Solved:**  
   - Efficiently extracting and analyzing data from various resume formats (PDF, Docx).  
